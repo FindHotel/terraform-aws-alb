@@ -1,4 +1,6 @@
 resource "aws_alb" "main" {
+  count = "${var.create_alb ? 1 : 0}"
+
   name            = "${var.alb_name}"
   subnets         = ["${var.subnets}"]
   security_groups = ["${var.alb_security_groups}"]
@@ -15,14 +17,15 @@ resource "aws_alb" "main" {
 }
 
 resource "aws_s3_bucket" "log_bucket" {
+  count         = "${var.create_log_bucket && var.create_alb ? 1 : 0}"
   bucket        = "${var.log_bucket_name}"
   policy        = "${var.bucket_policy == "" ? data.aws_iam_policy_document.bucket_policy.json : var.bucket_policy}"
   force_destroy = "${var.force_destroy_log_bucket}"
-  count         = "${var.create_log_bucket ? 1 : 0}"
   tags          = "${merge(var.tags, map("Name", var.log_bucket_name))}"
 }
 
 resource "aws_alb_target_group" "target_group" {
+  count                = "${var.create_alb ? 1 : 0}"
   name                 = "${var.alb_name}-tg"
   port                 = "${var.backend_port}"
   protocol             = "${upper(var.backend_protocol)}"
@@ -54,10 +57,10 @@ resource "aws_alb_target_group" "target_group" {
 }
 
 resource "aws_alb_listener" "frontend_http" {
+  count             = "${contains(var.alb_protocols, "HTTP") && var.create_alb ? 1 : 0}"
   load_balancer_arn = "${aws_alb.main.arn}"
   port              = "${var.alb_http_port}"
   protocol          = "HTTP"
-  count             = "${contains(var.alb_protocols, "HTTP") ? 1 : 0}"
 
   default_action {
     target_group_arn = "${aws_alb_target_group.target_group.id}"
@@ -68,12 +71,12 @@ resource "aws_alb_listener" "frontend_http" {
 }
 
 resource "aws_alb_listener" "frontend_https" {
+  count             = "${contains(var.alb_protocols, "HTTPS") && var.create_alb ? 1 : 0}"
   load_balancer_arn = "${aws_alb.main.arn}"
   port              = "${var.alb_https_port}"
   protocol          = "HTTPS"
   certificate_arn   = "${var.certificate_arn}"
   ssl_policy        = "${var.security_policy}"
-  count             = "${contains(var.alb_protocols, "HTTPS") ? 1 : 0}"
 
   default_action {
     target_group_arn = "${aws_alb_target_group.target_group.id}"

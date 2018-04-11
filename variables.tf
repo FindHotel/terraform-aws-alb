@@ -52,6 +52,11 @@ variable "cookie_duration" {
   default     = 1
 }
 
+variable "create_alb" {
+  description = "Conditional Creation of this module"
+  default     = true
+}
+
 variable "create_log_bucket" {
   description = "Create the S3 bucket (named with the log_bucket_name var) and attach a policy to allow ALB logging."
   default     = false
