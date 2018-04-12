@@ -131,7 +131,7 @@ resource "aws_alb_listener" "frontend_https" {
 resource "aws_alb_listener" "tcp_listener" {
   count             = "${var.create_alb && local.create_nlb ? 1 : 0}"
   load_balancer_arn = "${aws_alb.main.arn}"
-  port              = "${var.alb_https_port}"
+  port              = "${var.alb_tcp_port}"
   protocol          = "TCP"
 
   default_action {
