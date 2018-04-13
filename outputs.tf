@@ -50,10 +50,10 @@ output "principal_account_id" {
 
 output "target_group_arn" {
   description = "ARN of the target group. Useful for passing to your Auto Scaling group module."
-  value       = "${element(concat(aws_alb_target_group.target_group.*.arn, list("")), 0)}"
+  value       = "${element(concat(aws_alb_target_group.application_target_group.*.arn, aws_alb_target_group.network_target_group.*.arn, list("")), 0)}"
 }
 
 output "target_group_name" {
   description = "Name of the target group. Useful for passing to your CodeDeploy Deployment Group."
-  value       = "${element(concat(aws_alb_target_group.target_group.*.name, list("")), 0)}"
+  value       = "${element(concat(aws_alb_target_group.application_target_group.*.arn, aws_alb_target_group.network_target_group.*.arn, list("")), 0)}"
 }

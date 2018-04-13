@@ -13,6 +13,10 @@ variable "alb_https_port" {
   default     = 443
 }
 
+variable alb_tcp_port {
+  description = "The port the Load Balancer listen when TCP is used"
+}
+
 variable "alb_name" {
   description = "The name of the ALB as will show in the AWS EC2 ELB console."
 }
@@ -26,6 +30,10 @@ variable "alb_protocols" {
 variable "alb_security_groups" {
   description = "The security groups with which we associate the ALB. e.g. [\"sg-edcd9784\",\"sg-edcd9785\"]"
   type        = "list"
+}
+
+variable alb_type {
+  description = "The type of the Load Balancer. Options: application, network"
 }
 
 variable "backend_port" {
