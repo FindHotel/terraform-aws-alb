@@ -60,10 +60,6 @@ resource "aws_alb_target_group" "application_target_group" {
   tags = "${merge(var.tags, map("Name", "${var.alb_name}-tg"))}"
 
   depends_on = ["aws_alb.main"]
-
-  lifecycle {
-    create_before_destroy = true
-  }
 }
 
 resource "aws_alb_target_group" "network_target_group" {
@@ -92,10 +88,6 @@ resource "aws_alb_target_group" "network_target_group" {
   tags = "${merge(var.tags, map("Name", "${var.alb_name}-tg"))}"
 
   depends_on = ["aws_alb.main"]
-
-  lifecycle {
-    create_before_destroy = true
-  }
 }
 
 resource "aws_alb_listener" "frontend_http" {
