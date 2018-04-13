@@ -8,7 +8,7 @@ resource "aws_alb" "main" {
   name    = "${var.alb_name}"
   subnets = ["${var.subnets}"]
 
-  # security_groups    = ["${var.alb_security_groups}"]
+  security_groups    = ["${var.alb_security_groups}"]
   internal           = "${var.alb_is_internal}"
   tags               = "${merge(var.tags, map("Name", var.alb_name))}"
   load_balancer_type = "${var.alb_type}"
