@@ -3,12 +3,28 @@ locals {
 }
 
 resource "aws_alb" "main" {
-  count = "${var.create_alb ? 1 : 0}"
-
-  name    = "${var.alb_name}"
-  subnets = ["${var.subnets}"]
-
+  count              = "${var.create_alb && !local.create_nlb ? 1 : 0}"
+  name               = "${var.alb_name}"
+  subnets            = ["${var.subnets}"]
   security_groups    = ["${var.alb_security_groups}"]
+  internal           = "${var.alb_is_internal}"
+  tags               = "${merge(var.tags, map("Name", var.alb_name))}"
+  load_balancer_type = "${var.alb_type}"
+
+  access_logs {
+    bucket  = "${var.log_bucket_name}"
+    prefix  = "${var.log_location_prefix}"
+    enabled = "${var.enable_logging}"
+  }
+
+  depends_on = ["aws_s3_bucket.log_bucket"]
+}
+
+resource "aws_alb" "nlb" {
+  count = "${var.create_alb && local.create_nlb ? 1 : 0}"
+
+  name               = "${var.alb_name}"
+  subnets            = ["${var.subnets}"]
   internal           = "${var.alb_is_internal}"
   tags               = "${merge(var.tags, map("Name", var.alb_name))}"
   load_balancer_type = "${var.alb_type}"
@@ -87,7 +103,7 @@ resource "aws_alb_target_group" "network_target_group" {
 
   tags = "${merge(var.tags, map("Name", "${var.alb_name}-tg"))}"
 
-  depends_on = ["aws_alb.main"]
+  depends_on = ["aws_alb.nlb"]
 }
 
 resource "aws_alb_listener" "frontend_http" {
@@ -122,7 +138,7 @@ resource "aws_alb_listener" "frontend_https" {
 
 resource "aws_alb_listener" "tcp_listener" {
   count             = "${var.create_alb && local.create_nlb ? 1 : 0}"
-  load_balancer_arn = "${aws_alb.main.arn}"
+  load_balancer_arn = "${aws_alb.nlb.arn}"
   port              = "${var.alb_tcp_port}"
   protocol          = "TCP"
 
@@ -131,5 +147,5 @@ resource "aws_alb_listener" "tcp_listener" {
     type             = "forward"
   }
 
-  depends_on = ["aws_alb.main"]
+  depends_on = ["aws_alb.nlb"]
 }
