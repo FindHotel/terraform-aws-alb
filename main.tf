@@ -53,6 +53,7 @@ resource "aws_alb_target_group" "application_target_group" {
   protocol             = "${upper(var.backend_protocol)}"
   vpc_id               = "${var.vpc_id}"
   deregistration_delay = "${var.deregistration_delay}"
+  slow_start           = "${var.slow_start}"
 
   health_check {
     interval            = "${var.health_check_interval}"
@@ -85,6 +86,7 @@ resource "aws_alb_target_group" "network_target_group" {
   protocol             = "TCP"
   vpc_id               = "${var.vpc_id}"
   deregistration_delay = "${var.deregistration_delay}"
+  slow_start           = "${var.slow_start}"
 
   health_check {
     interval            = "${var.health_check_interval}"

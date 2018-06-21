@@ -81,6 +81,11 @@ variable "deregistration_delay" {
   default     = 300
 }
 
+variable "slow_start" {
+  description = "(Optional) The amount time for targets to warm up before the load balancer sends them a full share of requests. The range is 30-900 seconds or 0 to disable. The default value is 0 seconds."
+  default     = 0
+}
+
 variable "enable_logging" {
   default     = false
   description = "Enable the ALB to write log entries to S3."
