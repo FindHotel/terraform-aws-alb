@@ -136,6 +136,12 @@ resource "aws_alb_listener" "frontend_https" {
   depends_on = ["aws_alb.main"]
 }
 
+resource "aws_lb_listener_certificate" "multiple_cert_attach" {
+  count           = "${contains(var.alb_protocols, "HTTPS") && var.create_alb && !local.create_nlb && length(var.additional_listener_certificates) > 0 ? length(var.additional_listener_certificates) : 0}"
+  listener_arn    = "${aws_alb_listener.frontend_https.arn}"
+  certificate_arn = "${element(var.additional_listener_certificates, count.index)}"
+}
+
 resource "aws_alb_listener" "tcp_listener" {
   count             = "${var.create_alb && local.create_nlb ? 1 : 0}"
   load_balancer_arn = "${aws_alb.nlb.arn}"

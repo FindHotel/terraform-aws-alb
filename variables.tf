@@ -1,3 +1,9 @@
+variable "additional_listener_certificates" {
+  description = "Creates additional certificates attachments for the alb.This does not replace the default certificate on the listener."
+  type        = "list"
+  default     = []
+}
+
 variable "alb_is_internal" {
   description = "Boolean determining if the ALB is internal or externally facing."
   default     = false
