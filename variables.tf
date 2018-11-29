@@ -163,3 +163,8 @@ variable "target_type" {
   description = "The type of target that you must specify when registering targets with this target group. The possible values are instance (targets are specified by instance ID) or ip (targets are specified by IP address). "
   default     = "instance"
 }
+
+variable "idle_timeout" {
+  description = "(Optional) The time in seconds that the connection is allowed to be idle. Only for application LB"
+  default = 60
+}

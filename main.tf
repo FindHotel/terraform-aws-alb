@@ -10,6 +10,7 @@ resource "aws_alb" "main" {
   internal           = "${var.alb_is_internal}"
   tags               = "${merge(var.tags, map("Name", var.alb_name))}"
   load_balancer_type = "${var.alb_type}"
+  idle_timeout       = "${var.idle_timeout}"
 
   access_logs {
     bucket  = "${var.log_bucket_name}"
